@@ -51,14 +51,8 @@ export default class ScrollFollow extends Component {
     marginToBottomEpsilon: MARGIN_TO_BOTTOM_EPSILON,
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    return {
-      follow: nextProps.startFollowing,
-    };
-  }
-
   state = {
-    follow: false,
+    follow: this.props.startFollowing,
     scrollHeight: 0,
   };
 
