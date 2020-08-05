@@ -1,5 +1,7 @@
-import { Component, Fragment } from 'react';
-import { bool, func } from 'prop-types';
+import {Component, Fragment} from 'react';
+import {bool, number, func} from 'prop-types';
+
+const MARGIN_TO_BOTTOM_EPSILON = 30;
 
 export default class ScrollFollow extends Component {
   static propTypes = {
@@ -35,10 +37,18 @@ export default class ScrollFollow extends Component {
      * property passed to the child function.
      */
     startFollowing: bool,
+    /**
+     * The value that is used to define a margin to bottom in pixels
+     * when the component should resume following new records, when
+     * `startFollowing` was set to `true`
+     * Defaults to `30`
+     */
+    marginToBottomEpsilon: number,
   };
 
   static defaultProps = {
     startFollowing: false,
+    marginToBottomEpsilon: MARGIN_TO_BOTTOM_EPSILON
   };
 
   static getDerivedStateFromProps(nextProps) {
@@ -49,25 +59,38 @@ export default class ScrollFollow extends Component {
 
   state = {
     follow: false,
+    scrollHeight: 0
   };
 
-  handleScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
-    if (this.state.follow && scrollHeight - scrollTop !== clientHeight) {
-      this.setState({ follow: false });
+  handleScroll = ({scrollTop, scrollHeight, clientHeight}) => {
+    if (this.state.scrollHeight !== scrollHeight) {
+      this.setState(state => ({...state, scrollHeight}))
+    } else {
+      const marginToBottom = scrollHeight - scrollTop - clientHeight;
+
+      if (this.state.follow && marginToBottom > this.props.marginToBottomEpsilon) {
+        this.stopFollowing();
+      } else if (
+        this.props.startFollowing &&
+        !this.state.follow &&
+        marginToBottom <= this.props.marginToBottomEpsilon
+      ) {
+        this.startFollowing();
+      }
     }
   };
 
   startFollowing = () => {
-    this.setState({ follow: true });
+    this.setState(state => ({...state, follow: true}));
   };
 
   stopFollowing = () => {
-    this.setState({ follow: false });
+    this.setState(state => ({...state, follow: false}));
   };
 
   render() {
-    const { render } = this.props;
-    const { follow } = this.state;
+    const {render} = this.props;
+    const {follow} = this.state;
 
     return (
       <Fragment>
