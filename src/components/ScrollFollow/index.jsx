@@ -1,5 +1,5 @@
-import {Component, Fragment} from 'react';
-import {bool, number, func} from 'prop-types';
+import { Component, Fragment } from 'react';
+import { bool, number, func } from 'prop-types';
 
 const MARGIN_TO_BOTTOM_EPSILON = 30;
 
@@ -48,7 +48,7 @@ export default class ScrollFollow extends Component {
 
   static defaultProps = {
     startFollowing: false,
-    marginToBottomEpsilon: MARGIN_TO_BOTTOM_EPSILON
+    marginToBottomEpsilon: MARGIN_TO_BOTTOM_EPSILON,
   };
 
   static getDerivedStateFromProps(nextProps) {
@@ -59,16 +59,19 @@ export default class ScrollFollow extends Component {
 
   state = {
     follow: false,
-    scrollHeight: 0
+    scrollHeight: 0,
   };
 
-  handleScroll = ({scrollTop, scrollHeight, clientHeight}) => {
+  handleScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
     if (this.state.scrollHeight !== scrollHeight) {
-      this.setState(state => ({...state, scrollHeight}))
+      this.setState(state => ({ ...state, scrollHeight }));
     } else {
       const marginToBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (this.state.follow && marginToBottom > this.props.marginToBottomEpsilon) {
+      if (
+        this.state.follow &&
+        marginToBottom > this.props.marginToBottomEpsilon
+      ) {
         this.stopFollowing();
       } else if (
         this.props.startFollowing &&
@@ -81,16 +84,16 @@ export default class ScrollFollow extends Component {
   };
 
   startFollowing = () => {
-    this.setState(state => ({...state, follow: true}));
+    this.setState(state => ({ ...state, follow: true }));
   };
 
   stopFollowing = () => {
-    this.setState(state => ({...state, follow: false}));
+    this.setState(state => ({ ...state, follow: false }));
   };
 
   render() {
-    const {render} = this.props;
-    const {follow} = this.state;
+    const { render } = this.props;
+    const { follow } = this.state;
 
     return (
       <Fragment>
